@@ -1,5 +1,6 @@
 import 'package:expense_tracker/views/home_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 void main() {
   runApp(const ExpenseTracker());
@@ -9,10 +10,18 @@ class ExpenseTracker extends StatelessWidget {
   const ExpenseTracker({super.key});
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Expense Tracker',
-      debugShowCheckedModeBanner: false,
-      home: const HomeView(),
+    return ScreenUtilInit(
+      designSize: const Size(360, 690),
+      minTextAdapt: true,
+      splitScreenMode: true,
+      builder: (_, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Expense Tracker',
+          home: child,
+        );
+      },
+      child: const HomeView(),
     );
   }
 }
