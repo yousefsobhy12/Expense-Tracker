@@ -2,6 +2,8 @@ import 'package:expense_tracker/data/expense_data.dart';
 import 'package:expense_tracker/models/expense_model.dart';
 import 'package:expense_tracker/widgets/custom_elevated_button.dart';
 import 'package:expense_tracker/widgets/custom_text_form_field.dart';
+import 'package:expense_tracker/widgets/expense_list_tile.dart';
+import 'package:expense_tracker/widgets/my_expense_summary.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -83,18 +85,22 @@ class _HomeViewState extends State<HomeView> {
       builder: (context, value, child) {
         return Scaffold(
           backgroundColor: Colors.white,
-          appBar: AppBar(title: Text('Expense Tracker')),
-          body: ListView.builder(
-            itemCount: value.overallExpenseList.length,
-            itemBuilder: (context, index) {
-              return ListTile(
-                title: Text(value.getAllExpenses()[index].name),
-                subtitle: Text(
-                  value.getAllExpenses()[index].dateTime.toString(),
-                ),
-                trailing: Text('${value.getAllExpenses()[index].amount} L.E'),
-              );
-            },
+          body: ListView(
+            children: [
+              MyExpenseSummary(startOfWeek: value.startOfWeekDate(),),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: NeverScrollableScrollPhysics(),
+                itemCount: value.overallExpenseList.length,
+                itemBuilder: (context, index) {
+                  return ExpenseListTile(
+                    name: value.getAllExpenses()[index].name,
+                    amount: '${value.getAllExpenses()[index].amount} L.E',
+                    dateTime: value.getAllExpenses()[index].dateTime,
+                  );
+                },
+              ),
+            ],
           ),
           floatingActionButton: FloatingActionButton(
             onPressed: addNewExpense,
