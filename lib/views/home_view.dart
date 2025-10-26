@@ -5,6 +5,7 @@ import 'package:expense_tracker/widgets/custom_text_form_field.dart';
 import 'package:expense_tracker/widgets/expense_list_tile.dart';
 import 'package:expense_tracker/widgets/my_expense_summary.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:provider/provider.dart';
 
 class HomeView extends StatefulWidget {
@@ -37,6 +38,7 @@ class _HomeViewState extends State<HomeView> {
             CustomTextFormField(
               hint: 'Enter the amount',
               controller: expenseAmountController,
+              isNumeric: true,
             ),
             SizedBox(height: 12),
             Row(
@@ -64,6 +66,23 @@ class _HomeViewState extends State<HomeView> {
   }
 
   void save() {
+    if (expenseNameController.text.isEmpty ||
+        expenseAmountController.text.isEmpty) {
+      return;
+    }
+
+    try {
+      double.parse(expenseAmountController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Please enter a valid number for amount'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
     ExpenseModel newExpense = ExpenseModel(
       name: expenseNameController.text,
       amount: expenseAmountController.text,
@@ -87,7 +106,8 @@ class _HomeViewState extends State<HomeView> {
           backgroundColor: Colors.white,
           body: ListView(
             children: [
-              MyExpenseSummary(startOfWeek: value.startOfWeekDate(),),
+              MyExpenseSummary(startOfWeek: value.startOfWeekDate()),
+              SizedBox(height: 20.h),
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
