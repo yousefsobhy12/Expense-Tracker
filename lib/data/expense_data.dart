@@ -37,19 +37,19 @@ class ExpenseData extends ChangeNotifier {
   String getDayName(DateTime dateTime) {
     switch (dateTime.weekday) {
       case 1:
-        return 'Sat';
-      case 2:
-        return 'Sun';
-      case 3:
         return 'Mon';
-      case 4:
-        return 'Tue';
-      case 5:
+      case 2:
+        return 'Tue'; 
+      case 3:
         return 'Wed';
-      case 6:
+      case 4:
         return 'Thu';
+      case 5:
+        return 'Fri'; 
+      case 6:
+        return 'Sat'; 
       case 7:
-        return 'Fri';
+        return 'Sun';
       default:
         return '';
     }
@@ -58,7 +58,6 @@ class ExpenseData extends ChangeNotifier {
   // get the date for the start of the week
   DateTime startOfWeekDate() {
     DateTime? startOfWeek;
-
     DateTime today = DateTime.now();
 
     for (var i = 0; i < 7; i++) {
