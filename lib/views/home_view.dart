@@ -18,6 +18,15 @@ class HomeView extends StatefulWidget {
 class _HomeViewState extends State<HomeView> {
   TextEditingController expenseNameController = TextEditingController();
   TextEditingController expenseAmountController = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    Provider.of<ExpenseData>(context, listen: false).prepareData();
+    super.initState();
+  }
+
   void addNewExpense() {
     showDialog(
       context: context,
@@ -27,42 +36,69 @@ class _HomeViewState extends State<HomeView> {
           'Add new Expense',
           style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CustomTextFormField(
-              hint: 'Enter expense name',
-              controller: expenseNameController,
-            ),
-            SizedBox(height: 4),
-            CustomTextFormField(
-              hint: 'Enter the amount',
-              controller: expenseAmountController,
-              isNumeric: true,
-            ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                CustomElevatedButton(
-                  onPressed: save,
-                  title: 'Save',
-                  backgroundColor: Colors.black,
-                  titleColor: Colors.white,
-                ),
-
-                SizedBox(width: 8),
-                CustomElevatedButton(
-                  onPressed: cancel,
-                  title: 'Cancel',
-                  backgroundColor: Colors.white,
-                  titleColor: Colors.black,
-                ),
-              ],
-            ),
-          ],
+        content: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CustomTextFormField(
+                hint: 'Enter expense name',
+                controller: expenseNameController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter expense name';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 6),
+              CustomTextFormField(
+                hint: 'Enter the amount',
+                controller: expenseAmountController,
+                isNumeric: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter amount';
+                  }
+                  try {
+                    double.parse(value);
+                  } catch (e) {
+                    return 'Please enter a valid number';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 12),
+              Row(
+                children: [
+                  CustomElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        save();
+                      }
+                    },
+                    title: 'Save',
+                    backgroundColor: Colors.black,
+                    titleColor: Colors.white,
+                  ),
+                  SizedBox(width: 8),
+                  CustomElevatedButton(
+                    onPressed: cancel,
+                    title: 'Cancel',
+                    backgroundColor: Colors.white,
+                    titleColor: Colors.black,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void deleteExpense(ExpenseModel expense) {
+    Provider.of<ExpenseData>(context, listen: false).deleteExpense(expense);
   }
 
   void save() {
@@ -117,6 +153,9 @@ class _HomeViewState extends State<HomeView> {
                     name: value.getAllExpenses()[index].name,
                     amount: '${value.getAllExpenses()[index].amount} L.E',
                     dateTime: value.getAllExpenses()[index].dateTime,
+                    onDelete: (unnamed) {
+                      deleteExpense(value.getAllExpenses()[index]);
+                    },
                   );
                 },
               ),

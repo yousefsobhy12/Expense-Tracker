@@ -19,9 +19,9 @@ class CustomTextFormField extends StatefulWidget {
     this.autoFocus = false,
     this.onChanged,
     this.phoneNumber = false,
-    this.isNumeric = false, // New flag for numeric input like weight
+    this.isNumeric = false,
     this.errorText,
-    this.suffixIcon, // Optionally pass a custom suffix icon
+    this.suffixIcon,
   });
 
   final String? label;
@@ -66,123 +66,61 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
   Widget build(BuildContext context) {
     // final theme = Theme.of(context);
 
-    return SizedBox(
-      height: 48.h,
-      child: TextFormField(
-        focusNode: _focusNode,
-        obscureText: widget.password && !isVisiblePassword,
-        readOnly: widget.readOnly,
-        maxLines: widget.maxLines,
-        // Decide keyboard type based on phone number or numeric input
-        keyboardType: widget.phoneNumber
-            ? TextInputType.phone
-            : widget.isNumeric
-            ? const TextInputType.numberWithOptions(
-                decimal: true,
-              ) // Numeric with decimals
-            : TextInputType.text,
-        onTap: widget.onTap,
-        onChanged: widget.onChanged,
-        inputFormatters: widget.phoneNumber
-            ? [
-                FilteringTextInputFormatter.digitsOnly,
-              ] // Only digits for phone number
-            : widget.isNumeric
-            ? [
-                FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
-              ] // Allow digits and decimals for weight
-            : null,
-        autofocus: widget.autoFocus,
-        validator: widget.validator,
-        textInputAction: widget.textInputAction,
-        controller: widget.controller,
-        onFieldSubmitted: widget.onSubmitted,
-        textAlign: widget.phoneNumber || widget.isNumeric
-            ? TextAlign.right
-            : TextAlign.start,
-        decoration: InputDecoration(
-          fillColor: widget.fillColor ?? Colors.grey.shade100,
-          filled: true,
-          hintText: widget.hint,
-          errorText: widget.errorText,
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(color: Color(0xffCCBEAE)),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(color: Color(0xffCCBEAE)),
-          ),
-          disabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12.r),
-            borderSide: const BorderSide(color: Color(0xffCCBEAE)),
-          ),
-
-          // Use the provided suffixIcon if available; otherwise, fall back to the default behavior.
-          prefixIcon: widget.suffixIcon != null
-              ? SizedBox(
-                  width: 18.w,
-                  height: 18.h,
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: widget.suffixIcon,
-                  ),
-                )
-              : widget.phoneNumber
-              ? _buildSuffixIcon()
-              : widget.isNumeric
-              ? _buildNumericSuffixIcon()
-              : null,
-          // suffixIcon: widget.suffixIcon != null
-          //     ? SizedBox(
-          //         width: 18.w,
-          //         height: 18.h,
-          //         child: FittedBox(
-          //           fit: BoxFit.contain,
-          //           child: widget.suffixIcon,
-          //         ),
-          //       )
-          //     : widget.phoneNumber
-          //     ? _buildSuffixIcon()
-          //     : widget.isNumeric
-          //     ? _buildNumericSuffixIcon()
-          //     : null,
-        ),
+    return TextFormField(
+      focusNode: _focusNode,
+      obscureText: widget.password && !isVisiblePassword,
+      readOnly: widget.readOnly,
+      maxLines: widget.maxLines,
+      // Decide keyboard type based on phone number or numeric input
+      keyboardType: widget.phoneNumber
+          ? TextInputType.phone
+          : widget.isNumeric
+          ? const TextInputType.numberWithOptions(
+              decimal: true,
+            ) // Numeric with decimals
+          : TextInputType.text,
+      onTap: widget.onTap,
+      onChanged: widget.onChanged,
+      inputFormatters: widget.phoneNumber
+          ? [
+              FilteringTextInputFormatter.digitsOnly,
+            ] // Only digits for phone number
+          : widget.isNumeric
+          ? [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            ] // Allow digits and decimals for weight
+          : null,
+      autofocus: widget.autoFocus,
+      validator: widget.validator,
+      textInputAction: widget.textInputAction,
+      controller: widget.controller,
+      onFieldSubmitted: widget.onSubmitted,
+      textAlign: TextAlign.start,
+      decoration: InputDecoration(
+        fillColor: widget.fillColor ?? Colors.grey.shade100,
+        filled: true,
+        hintText: widget.hint,
+        errorText: widget.errorText,
+        enabledBorder: border(),
+        focusedBorder: border(),
+        disabledBorder: border(),
+        errorBorder: errorBorder(),
+        focusedErrorBorder: errorBorder(),
       ),
     );
   }
 
-  Widget? _buildSuffixIcon() {
-    if (widget.phoneNumber) {
-      return Padding(
-        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              "+966",
-              style: Theme.of(
-                context,
-              ).textTheme.bodyMedium?.copyWith(fontSize: 16.sp),
-            ),
-            SizedBox(height: 30.h, child: const VerticalDivider(thickness: 1)),
-          ],
-        ),
-      );
-    }
-    return null;
+  OutlineInputBorder border() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: const BorderSide(color: Color(0xffCCBEAE)),
+    );
   }
 
-  // Custom suffix for numeric input (e.g., weight)
-  Widget? _buildNumericSuffixIcon() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.h),
-      child: Text(
-        "", // Or any other suffix you want to add for weight, for example
-        style: Theme.of(
-          context,
-        ).textTheme.bodyMedium?.copyWith(fontSize: 16.sp),
-      ),
+  OutlineInputBorder errorBorder() {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(12.r),
+      borderSide: const BorderSide(color: Colors.red),
     );
   }
 }

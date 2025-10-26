@@ -2,9 +2,14 @@ import 'package:expense_tracker/data/expense_data.dart';
 import 'package:expense_tracker/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
+
+  await Hive.initFlutter();
+ await Hive.openBox('expenses_database');
+
   runApp(const ExpenseTracker());
 }
 
